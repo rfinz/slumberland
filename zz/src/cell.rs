@@ -31,27 +31,27 @@ impl Cell {
         self.content
     }
 
-    pub fn set_posward(&mut self, dimension: Dimension, cell: Cell) {
+    pub fn set_posward(&mut self, dimension: Dimension, cell: Rc<RefCell<Cell>>) {
         match self.posward {
             Some(ref mut i) => {
-                i.insert(dimension, Rc::new(RefCell::new(cell)));
+                i.insert(dimension, cell);
             },
             None => {
                 let mut hm = HashMap::new();
-                hm.insert(dimension, Rc::new(RefCell::new(cell)));
+                hm.insert(dimension, cell);
                 self.posward = Some(hm);
             },
         };
     }
 
-    pub fn set_negward(&mut self, dimension: Dimension, cell: Cell) {
+    pub fn set_negward(&mut self, dimension: Dimension, cell: Rc<RefCell<Cell>>) {
         match self.negward {
             Some(ref mut i) => {
-                i.insert(dimension, Rc::new(RefCell::new(cell)));
+                i.insert(dimension, cell);
             },
             None => {
                 let mut hm = HashMap::new();
-                hm.insert(dimension, Rc::new(RefCell::new(cell)));
+                hm.insert(dimension, cell);
                 self.negward = Some(hm);
             },
         };
