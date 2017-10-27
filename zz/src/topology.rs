@@ -7,7 +7,7 @@ use dimension::Dimension;
 
 pub struct Topology {
     d_cursor: Dimension,
-    pub accursed: Rc<RefCell<Cell>>,
+    accursed: Rc<RefCell<Cell>>,
     dimensions: Vec<Dimension>
 }
 
