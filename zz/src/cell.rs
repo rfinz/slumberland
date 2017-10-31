@@ -57,7 +57,7 @@ impl Cell {
         };
     }
 
-    pub fn get_posward(&mut self, dimension: Dimension) -> Option<Rc<RefCell<Cell>>> {
+    pub fn get_posward(&self, dimension: Dimension) -> Option<Rc<RefCell<Cell>>> {
         let op = match self.posward {
             Some(ref i) => match i.get(&dimension) {
                 None => None,
@@ -73,6 +73,28 @@ impl Cell {
             Some(ref i) => match i.get(&dimension) {
                 None => None,
                 Some(k) => Some(Rc::clone(k)),
+            },
+            None => None,
+        };
+        op
+    }
+
+    pub fn unlink_posward(&mut self, dimension: Dimension) -> Option<Rc<RefCell<Cell>>> {
+        let op = match self.posward {
+            Some(ref mut i) => match i.remove(&dimension) {
+                None => None,
+                Some(k) => Some(Rc::clone(&k)),
+            },
+            None => None,
+        };
+        op
+    }
+
+    pub fn unlink_negward(&mut self, dimension: Dimension) -> Option<Rc<RefCell<Cell>>> {
+        let op = match self.negward {
+            Some(ref mut i) => match i.remove(&dimension) {
+                None => None,
+                Some(k) => Some(Rc::clone(&k)),
             },
             None => None,
         };
