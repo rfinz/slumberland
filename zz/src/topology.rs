@@ -64,6 +64,28 @@ impl Topology {
         }
     }
 
+    pub fn accurse_posward(&mut self) {
+        let curr = (*self.accursed).borrow_mut().clone();
+
+        match curr.get_posward(self.d_cursor.clone()){
+            None => (),
+            Some(i) => {
+                self.accursed = Rc::clone(&i)
+            }
+        }
+    }
+
+    pub fn accurse_negward(&mut self) {
+        let curr = (*self.accursed).borrow_mut().clone();
+
+        match curr.get_negward(self.d_cursor.clone()){
+            None => (),
+            Some(i) => {
+                self.accursed = Rc::clone(&i)
+            }
+        }
+    }
+
 }
 
 impl Iterator for IterRank {
