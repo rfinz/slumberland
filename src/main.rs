@@ -13,6 +13,12 @@ fn main() {
     top.accurse_posward();
     top.insert_posward(curse.clone(), n2);
     top.accurse_negward();
+    println!("-----> BEFORE UNSHIFT");
+    for i in top.iter_rank(curse.clone()) {
+        println!("{:?}", i);
+    }
+    top.unshift_accursed();
+    println!("-----> AFTER UNSHIFT");
     for i in top.iter_rank(curse.clone()) {
         println!("{:?}", i);
     }

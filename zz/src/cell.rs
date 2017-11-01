@@ -79,6 +79,17 @@ impl Cell {
         op
     }
 
+    pub fn as_connections(self: Box<Self>) -> (
+        Option<HashMap<Dimension, Rc<RefCell<Cell>>>>,
+        Option<HashMap<Dimension, Rc<RefCell<Cell>>>>) {
+
+        let res_pos = self.clone();
+        let res_neg = self.clone();
+
+        (res_pos.posward, res_neg.negward)
+
+    }
+
     pub fn unlink_posward(&mut self, dimension: Dimension) -> Option<Rc<RefCell<Cell>>> {
         let op = match self.posward {
             Some(ref mut i) => match i.remove(&dimension) {

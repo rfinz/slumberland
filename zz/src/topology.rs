@@ -86,6 +86,80 @@ impl Topology {
         }
     }
 
+    pub fn pop_accursed(&mut self) -> Option<Rc<RefCell<Cell>>> {
+        let conns = Cell::as_connections(Box::new((*self.accursed).borrow_mut().clone()));
+        let res = Rc::clone(&self.accursed);
+        let curr = (*self.accursed).borrow_mut().clone();
+
+        match curr.get_negward(self.d_cursor.clone()){
+            None => return None,
+            Some(i) => {
+                self.accursed = Rc::clone(&i)
+            }
+        }
+
+        match conns.0 {
+            None => return None,
+            Some(i) => {
+                for d in i.keys() {
+                    let next = i.get(&d);
+                    match conns.1 {
+                        None => (),
+                        Some(ref k) => {
+                            let prev = k.get(&d);
+                            match prev {
+                                None => (),
+                                Some(v) => {
+                                    (*(next.unwrap())).borrow_mut().set_negward(d.clone(), Rc::clone(&v));
+                                    (*v).borrow_mut().set_posward(d.clone(), Rc::clone(&next.unwrap()));
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        Some(res)
+    }
+
+    pub fn unshift_accursed(&mut self) -> Option<Rc<RefCell<Cell>>> {
+        let conns = Cell::as_connections(Box::new((*self.accursed).borrow_mut().clone()));
+        let res = Rc::clone(&self.accursed);
+        let curr = (*self.accursed).borrow_mut().clone();
+
+        match curr.get_posward(self.d_cursor.clone()){
+            None => return None,
+            Some(i) => {
+                self.accursed = Rc::clone(&i)
+            }
+        }
+
+        match conns.0 {
+            None => return None,
+            Some(i) => {
+                for d in i.keys() {
+                    let next = i.get(&d);
+                    match conns.1 {
+                        None => (),
+                        Some(ref k) => {
+                            let prev = k.get(&d);
+                            match prev {
+                                None => (),
+                                Some(v) => {
+                                    (*(next.unwrap())).borrow_mut().set_negward(d.clone(), Rc::clone(&v));
+                                    (*v).borrow_mut().set_posward(d.clone(), Rc::clone(&next.unwrap()));
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        Some(res)
+    }
+
 }
 
 impl Iterator for IterRank {
