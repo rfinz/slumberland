@@ -24,6 +24,10 @@ impl Topology {
         }
     }
 
+    pub fn get_accursed(&self) {
+        Rc::clone(&self.accursed);
+    }
+
     pub fn iter_rank(&self, rank: Dimension) -> IterRank {
         IterRank {
             rank: rank,
@@ -62,6 +66,29 @@ impl Topology {
                 ac.set_negward(dimension.clone(), Rc::clone(&cell));
             }
         }
+    }
+
+    pub fn link(dimension: Dimension, negward: Rc<RefCell<Cell>>, posward: Rc<RefCell<Cell>> ) {
+        (*negward).borrow_mut().set_posward(dimension.clone(), Rc::clone(&posward));
+        (*posward).borrow_mut().set_negward(dimension.clone(), Rc::clone(&negward));
+    }
+
+    pub fn unlink_posward(dimension: Dimension, cell: Rc<RefCell<Cell>>) {
+        match (*cell).borrow_mut().unlink_posward(dimension.clone()){
+            None => (),
+            Some(i) => {
+              (*i).borrow_mut().unlink_negward(dimension.clone());
+            }
+        };
+    }
+
+    pub fn unlink_negward(dimension: Dimension, cell: Rc<RefCell<Cell>>) {
+        match (*cell).borrow_mut().unlink_negward(dimension.clone()){
+            None => (),
+            Some(i) => {
+              (*i).borrow_mut().unlink_posward(dimension.clone());
+            }
+        };
     }
 
     pub fn accurse_posward(&mut self) {
@@ -123,7 +150,7 @@ impl Topology {
         Some(res)
     }
 
-    pub fn unshift_accursed(&mut self) -> Option<Rc<RefCell<Cell>>> {
+    pub fn shift_accursed(&mut self) -> Option<Rc<RefCell<Cell>>> {
         let conns = Cell::as_connections(Box::new((*self.accursed).borrow_mut().clone()));
         let res = Rc::clone(&self.accursed);
         let curr = (*self.accursed).borrow_mut().clone();
