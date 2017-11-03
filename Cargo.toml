@@ -1,9 +1,10 @@
 [package]
 name = "slumberland"
-version = "0.1.0"
+version = "0.1.1"
 authors = ["Raymond Finzel <prometheoid@gmail.com>"]
 
 [dependencies]
 zz = { path = "zz" }
+memories = { path = "memories" }
 
 [workspace]
