@@ -1,0 +1,6 @@
+[package]
+name = "memories"
+version = "0.1.0"
+authors = ["Raymond Finzel <prometheoid@gmail.com>"]
+
+[dependencies]
