@@ -1,6 +1,7 @@
 [package]
 name = "memories"
 version = "0.1.0"
-authors = ["Raymond Finzel <prometheoid@gmail.com>"]
+authors = ["Raymond Finzel <rfinz.me@rfinz.me>"]
 
 [dependencies]
+zz = { path = "../zz" }
