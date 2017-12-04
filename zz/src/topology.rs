@@ -125,24 +125,14 @@ impl Topology {
             }
         }
 
-        match conns.0 {
-            None => return None,
-            Some(i) => {
-                for d in i.keys() {
-                    let next = i.get(&d);
-                    match conns.1 {
-                        None => (),
-                        Some(ref k) => {
-                            let prev = k.get(&d);
-                            match prev {
-                                None => (),
-                                Some(v) => {
-                                    (*(next.unwrap())).borrow_mut().set_negward(d.clone(), Rc::clone(&v));
-                                    (*v).borrow_mut().set_posward(d.clone(), Rc::clone(&next.unwrap()));
-                                }
-                            }
-                        }
-                    }
+        for d in conns.0.keys() {
+            let next = conns.0.get(&d);
+            let prev = conns.1.get(&d);
+            match prev {
+                None => (),
+                Some(v) => {
+                    (*(next.unwrap())).borrow_mut().set_negward(d.clone(), Rc::clone(&v));
+                    (*v).borrow_mut().set_posward(d.clone(), Rc::clone(&next.unwrap()));
                 }
             }
         }
@@ -162,24 +152,14 @@ impl Topology {
             }
         }
 
-        match conns.0 {
-            None => return None,
-            Some(i) => {
-                for d in i.keys() {
-                    let next = i.get(&d);
-                    match conns.1 {
-                        None => (),
-                        Some(ref k) => {
-                            let prev = k.get(&d);
-                            match prev {
-                                None => (),
-                                Some(v) => {
-                                    (*(next.unwrap())).borrow_mut().set_negward(d.clone(), Rc::clone(&v));
-                                    (*v).borrow_mut().set_posward(d.clone(), Rc::clone(&next.unwrap()));
-                                }
-                            }
-                        }
-                    }
+        for d in conns.0.keys() {
+            let next = conns.0.get(&d);
+            let prev = conns.1.get(&d);
+            match prev {
+                None => (),
+                Some(v) => {
+                    (*(next.unwrap())).borrow_mut().set_negward(d.clone(), Rc::clone(&v));
+                    (*v).borrow_mut().set_posward(d.clone(), Rc::clone(&next.unwrap()));
                 }
             }
         }
@@ -190,15 +170,15 @@ impl Topology {
 }
 
 impl Iterator for IterRank {
-    type Item = CellType;
+    type Item = Cell;
 
-    fn next(&mut self) -> Option<CellType> {
+    fn next(&mut self) -> Option<Cell> {
         if self.end {
             return None;
         }
 
         let ac = (*self.accursed).borrow_mut().clone();
-        let res = Some(Cell::as_content(Box::new(ac)));
+        // let res = Some(Cell::as_content(Box::new(ac)));
         {
             let cell = (*self.accursed).borrow_mut().clone();
 
@@ -211,19 +191,19 @@ impl Iterator for IterRank {
                 },
             };
         }
-        res
+        Some(ac)
     }
 }
 
 impl DoubleEndedIterator for IterRank {
 
-    fn next_back(&mut self) -> Option<CellType> {
+    fn next_back(&mut self) -> Option<Cell> {
         if self.end {
             return None;
         }
 
         let ac = (*self.accursed).borrow_mut().clone();
-        let res = Some(Cell::as_content(Box::new(ac)));
+        // let res = Some(Cell::as_content(Box::new(ac)));
         {
             let cell = (*self.accursed).borrow_mut().clone();
 
@@ -236,6 +216,6 @@ impl DoubleEndedIterator for IterRank {
                 },
             };
         }
-        res
+        Some(ac)
     }
 }
