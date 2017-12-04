@@ -1,7 +1,10 @@
 extern crate zz;
+extern crate memories;
+
 use zz::topology::Topology;
 use zz::dimension::Dimension;
 use zz::cell::{Cell, CellType};
+
 
 fn main() {
     let curse = Dimension::new("cursor".to_string());
@@ -13,13 +16,10 @@ fn main() {
     top.accurse_posward();
     top.insert_posward(curse.clone(), n2);
     top.accurse_negward();
-    println!("-----> BEFORE SHIFT");
-    for i in top.iter_rank(curse.clone()) {
-        println!("{:?}", i);
-    }
-    top.shift_accursed();
-    println!("-----> AFTER SHIFT");
-    for i in top.iter_rank(curse.clone()) {
-        println!("{:?}", i);
-    }
+    println!("-----> BEFORE POP");
+    memories::memorize(&top, curse.clone());
+    top.accurse_posward();
+    top.pop_accursed();
+    println!("-----> AFTER POP");
+    memories::memorize(&top, curse.clone());
 }
