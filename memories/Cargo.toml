@@ -5,3 +5,5 @@ authors = ["Raymond Finzel <rfinz.me@rfinz.me>"]
 
 [dependencies]
 zz = { path = "../zz" }
+itertools = "0.7.4"
+uuid = { version = "0.5", features = ["v4"] }
