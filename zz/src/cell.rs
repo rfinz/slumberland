@@ -11,7 +11,8 @@ pub enum CellType {
     Function(String), // Transforms previous cell with code
     Monad(String), // Performs some cell-independent function ("side-effects")
     Redirect, // Directs movement through the topology based on conditions
-    Vertex // Holds a place in a topology without representing data
+    Vertex, // Holds a place in a topology without representing data
+    Preload // The contents and connections still need loading
 }
 
 #[derive(Clone, Debug)]
@@ -28,7 +29,30 @@ impl Cell {
             posward: HashMap::new(),
             negward: HashMap::new(),
             uuid: Uuid::new_v4(),
-            content
+            content: content
+        }
+    }
+
+    pub fn from_parts(
+        posward: HashMap<Dimension, Rc<RefCell<Cell>>>,
+        negward: HashMap<Dimension, Rc<RefCell<Cell>>>,
+        uuid: Uuid,
+        content: CellType
+    ) -> Self {
+        Cell {
+            posward: posward,
+            negward: negward,
+            uuid: uuid,
+            content: content
+        }
+    }
+
+    pub fn from_uuid(uuid: Uuid) -> Self {
+        Cell {
+            posward: HashMap::new(),
+            negward: HashMap::new(),
+            uuid: uuid,
+            content: CellType::Preload
         }
     }
 
