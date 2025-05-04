@@ -87,7 +87,7 @@ pub fn read_cell(cell_name: String) -> std::io::Result<Cell> {
 
     let mut splits = contents.split("\n").collect::<Vec<&str>>();
     let cell_uuid =  match Uuid::parse_str(cell_name.as_str()) {
-            Err(e) => Uuid::new_v4(), // not sure about this choice
+            Err(_e) => Uuid::new_v4(), // not sure about this choice
             Ok(u) => u
     };
     let cell_type_name = splits.remove(0);
@@ -109,11 +109,11 @@ pub fn read_cell(cell_name: String) -> std::io::Result<Cell> {
         let conns = s.split("->").collect::<Vec<&str>>();
         if conns.len() <= 1 {continue;};
         match Uuid::parse_str(conns[0]) {
-            Err(e) => None,
+            Err(_e) => None,
             Ok(u) => negward.insert(Dimension::new(conns[1].to_string()), Rc::new(RefCell::new(Cell::from_uuid(u))))
         };
         match Uuid::parse_str(conns[2]) {
-            Err(e) => None,
+            Err(_e) => None,
             Ok(u) => posward.insert(Dimension::new(conns[1].to_string()), Rc::new(RefCell::new(Cell::from_uuid(u))))
         };
     }

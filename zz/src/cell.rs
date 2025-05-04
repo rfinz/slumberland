@@ -2,7 +2,7 @@ use std::collections::HashMap;
 use std::cell::RefCell;
 use std::rc::Rc;
 
-use dimension::Dimension;
+use crate::dimension::Dimension;
 use uuid::Uuid;
 
 #[derive(Clone, Debug)]

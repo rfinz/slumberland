@@ -1,7 +1,7 @@
 use std::cell::RefCell;
 use std::rc::Rc;
-use cell::{Cell, CellType};
-use dimension::Dimension;
+use crate::cell::{Cell, CellType};
+use crate::dimension::Dimension;
 
 pub struct Topology {
     d_cursor: Dimension,
