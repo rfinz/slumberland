@@ -1,10 +1,35 @@
 [package]
 name = "slumberland"
 version = "0.1.1"
+edition = "2024"
 authors = ["Raymond Finzel <rfinz.me@rfinz.me>"]
 
 [dependencies]
 zz = { path = "zz" }
 memories = { path = "memories" }
+#rhai = "1.21.0"
+#rhai-ml = "0.1.2"
+dioxus = { version = "0.6.0", features = [] }
+
+[build-dependencies]
+lightningcss = "1.0.0-alpha.65"
+
+[features]
+default = ["desktop"]
+web = ["dioxus/web"]
+desktop = ["dioxus/desktop"]
+mobile = ["dioxus/mobile"]
 
 [workspace]
+
+[profile]
+
+[profile.wasm-dev]
+inherits = "dev"
+opt-level = 1
+
+[profile.server-dev]
+inherits = "dev"
+
+[profile.android-dev]
+inherits = "dev"
