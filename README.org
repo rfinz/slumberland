@@ -1,0 +1,13 @@
+* Slumberland
+
+Slumberland is an AI dream from a different computer universe. It is
+AI that is humane in both scale and ambition.
+
+** "Artificial" Intelligence should be a little bit dumb!
+
+There is no need to memorize the entirety of human thought in order to
+accomplish simple tasks. Slumberland is the fantasy world in which AI
+can make progress without first encoding the universe.
+
+Slumberland is built on Rust, naivety, and the belief that clear
+thought creates more value than floating point operations.
