@@ -12,7 +12,9 @@ memories = { path = "memories" }
 dioxus = { version = "0.6.0", features = [] }
 
 [build-dependencies]
-lightningcss = "1.0.0-alpha.65"
+lightningcss = { version = "1.0.0-alpha.65", features = ["visitor"] }
+cssparser = "0.33.0"
+cssparser-color = "0.1.0"
 
 [features]
 default = ["desktop"]
