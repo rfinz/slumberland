@@ -12,6 +12,6 @@ body {
     color:#fab;
 }
 
-.boxy {
-    @extends fab ba b--white br3 pa2;
+div.cell {
+    @extends ba b--white br3 pa2 ma2;
 }
