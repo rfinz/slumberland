@@ -29,14 +29,14 @@ fn main(){
     let fs = FileProvider::new();
     let mut arp = ExtendAtRuleParser;
     let mut bundler = Bundler::new_with_at_rule_parser(&fs, None, ParserOptions::default(), &mut arp);
-    let mut stylesheet = bundler.bundle(Path::new("assets/main_pre.css")).unwrap();
+    let mut stylesheet = bundler.bundle(Path::new("assets/main.css")).unwrap();
         let mut style_rules = HashMap::new();
     stylesheet.visit(&mut StyleRuleCollector {rules: &mut style_rules}).unwrap();
     println!("cargo:warning={:?}", style_rules);
     stylesheet.visit(&mut Extender { rules: &style_rules }).unwrap();
         
     let res = stylesheet.to_css(PrinterOptions::default()).unwrap();
-    let dest_path = Path::new("assets/main.css");
+    let dest_path = Path::new("assets/bundled.css");
     fs::write(&dest_path, res.code.as_bytes()).unwrap();
 }
 

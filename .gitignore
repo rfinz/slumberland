@@ -15,3 +15,6 @@ target/
 target/
 **/*.rs.bk
 Cargo.lock
+
+# bundled.css is rebuilt on every `cargo build`
+assets/bundled.css

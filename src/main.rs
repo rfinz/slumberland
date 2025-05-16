@@ -8,7 +8,7 @@ use zz::cell::{Cell, CellType};
 use dioxus::prelude::*;
 
 const FAVICON: Asset = asset!("/assets/favicon.ico");
-static CSS: Asset = asset!("/assets/main.css");
+static CSS: Asset = asset!("/assets/bundled.css");
 const HEADER_SVG: Asset = asset!("/assets/header.svg");
 
 fn main() {
