@@ -35,7 +35,7 @@ fn App() -> Element {
         div {
             class:"flex flex-column",
             for c in top.iter_rank(curse.clone()){
-                CellUI{ cell:c }
+                CellUI{ cell:c, dimension:"cursor" }
             }
         }
     }
@@ -43,7 +43,7 @@ fn App() -> Element {
 }
 
 #[component]
-fn CellUI(cell: Cell) -> Element {
+fn CellUI(cell: Cell, dimension: String) -> Element {
     let ct = Box::new(cell).as_content();
     let content = match ct {
         CellType::Value(v) => v, 
@@ -60,7 +60,7 @@ fn CellUI(cell: Cell) -> Element {
             div {
                 class: "flex justify-between",
                 div { class:"w-10", "-" }
-                div { class:"w-50", "cursor" }
+                div { class:"w-50", "{dimension}" }
                 div { class:"w-10", "+" }
             }
         }
