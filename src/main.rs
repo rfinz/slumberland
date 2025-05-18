@@ -15,18 +15,24 @@ fn main() {
     dioxus::launch(App);
 }
 
+#[derive(Clone, Copy)]
+struct Universe {
+    topology: Signal<Topology>,
+}
+
 #[component]
 fn App() -> Element {
     let curse = Dimension::new("cursor".to_string());
     let ac = Cell::new(CellType::Vertex);
-    let n = Cell::new(CellType::Monad("Python".to_string()));
-    let n2 = Cell::new(CellType::Function("map".to_string()));
-    let mut top = Topology::new(curse.clone(), ac);
-    top.insert_posward(curse.clone(), n);
-    top.accurse_posward();
-    top.insert_posward(curse.clone(), n2);
-    top.accurse_negward();
-    top.accurse_negward();
+    //let n = Cell::new(CellType::Monad("Python".to_string()));
+    //let n2 = Cell::new(CellType::Function("map".to_string()));
+    let mut top: Signal<Topology> = use_signal(|| Topology::new(curse.clone(), ac));
+    //top.write().insert_posward(curse.clone(), n);
+    //top.write().accurse_posward();
+    //top.write().insert_posward(curse.clone(), n2);
+    //top.write().accurse_negward();
+    use_context_provider(|| Universe { topology:top });
+    //top.accurse_negward();
     
     
     tracing::debug!("Rendering!");
@@ -34,8 +40,8 @@ fn App() -> Element {
         document::Stylesheet { href: CSS }
         div {
             class:"flex flex-column",
-            for c in top.iter_rank(curse.clone()){
-                CellUI{ cell:c, dimension:"cursor" }
+            for c in top.read().iter_rank(curse.clone()){
+                CellUI{ cell:c, dimension:curse.clone()}
             }
         }
     }
@@ -43,7 +49,7 @@ fn App() -> Element {
 }
 
 #[component]
-fn CellUI(cell: Cell, dimension: String) -> Element {
+fn CellUI(cell: Cell, dimension: Dimension) -> Element {
     let ct = Box::new(cell).as_content();
     let content = match ct {
         CellType::Value(v) => v, 
@@ -59,9 +65,16 @@ fn CellUI(cell: Cell, dimension: String) -> Element {
             div { class:"w-100 bb pb2 mb2", "{content}"}
             div {
                 class: "flex justify-between",
-                div { class:"w-10", "-" }
-                div { class:"w-50", "{dimension}" }
-                div { class:"w-10", "+" }
+                div {
+                    class:"w-10",
+                    "-"
+                }
+                div { class:"w-50", "cursor" }
+                div {
+                    class:"w-10",
+                    onclick: move |evt| consume_context::<Universe>().topology.write().insert_posward(dimension.clone(), Cell::new(CellType::Preload)),
+                    "+"
+                }
             }
         }
     }
