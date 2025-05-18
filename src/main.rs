@@ -27,32 +27,42 @@ fn App() -> Element {
     top.insert_posward(curse.clone(), n2);
     top.accurse_negward();
     top.accurse_negward();
-    //println!("-----> BEFORE POP");
-    //memories::memorize(&top, curse.clone());
-    //top.accurse_posward();
-    //top.pop_accursed();
-    //println!("-----> AFTER POP");
-    memories::memorize(&top, curse.clone());
-    let contents = top.iter_rank(curse.clone()).map(|i| {
-        let ct = Box::new(i).as_content();
-        match ct {
-            CellType::Value(v) => v, 
-            CellType::Function(f) => f, 
-            CellType::Monad(m) => m, 
-            CellType::Redirect => "Redirect".to_string(), 
-            CellType::Vertex => "Vertex".to_string(), 
-            CellType::Preload => "Preload".to_string() 
-        }
-    });
+    
     
     tracing::debug!("Rendering!");
     rsx! {
         document::Stylesheet { href: CSS }
         div {
-            for c in contents {
-                div { class: "cell", "{c}"}
+            class:"flex flex-column",
+            for c in top.iter_rank(curse.clone()){
+                CellUI{ cell:c }
             }
         }
     }
            
+}
+
+#[component]
+fn CellUI(cell: Cell) -> Element {
+    let ct = Box::new(cell).as_content();
+    let content = match ct {
+        CellType::Value(v) => v, 
+        CellType::Function(f) => f, 
+        CellType::Monad(m) => m, 
+        CellType::Redirect => "Redirect".to_string(), 
+        CellType::Vertex => "Vertex".to_string(), 
+        CellType::Preload => "Preload".to_string() 
+    };
+    rsx! {
+        div {
+            class: "w-25 cell tc",
+            div { class:"w-100 bb pb2 mb2", "{content}"}
+            div {
+                class: "flex justify-between",
+                div { class:"w-10", "-" }
+                div { class:"w-50", "cursor" }
+                div { class:"w-10", "+" }
+            }
+        }
+    }
 }

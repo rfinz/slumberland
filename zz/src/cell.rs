@@ -5,7 +5,7 @@ use std::rc::Rc;
 use crate::dimension::Dimension;
 use uuid::Uuid;
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, PartialEq)]
 pub enum CellType {
     Value(String), // Text, Numeral, File, Image, etc.
     Function(String), // Transforms previous cell with code
@@ -15,7 +15,7 @@ pub enum CellType {
     Preload // The contents and connections still need loading
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, PartialEq)]
 pub struct Cell {
     posward: HashMap<Dimension, Rc<RefCell<Cell>>>,
     negward: HashMap<Dimension, Rc<RefCell<Cell>>>,
