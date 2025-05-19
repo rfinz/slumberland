@@ -50,29 +50,35 @@ fn App() -> Element {
 
 #[component]
 fn CellUI(cell: Cell, dimension: Dimension) -> Element {
+    let uuid = cell.uuid;
     let ct = Box::new(cell).as_content();
     let content = match ct {
-        CellType::Value(v) => v, 
+        CellType::Value(v) => v,
         CellType::Function(f) => f, 
         CellType::Monad(m) => m, 
         CellType::Redirect => "Redirect".to_string(), 
         CellType::Vertex => "Vertex".to_string(), 
         CellType::Preload => "Preload".to_string() 
     };
+    
     rsx! {
         div {
             class: "w-25 cell tc",
-            div { class:"w-100 bb pb2 mb2", "{content}"}
+            div { class:"w-100 bb pb2 mb2", "{content} {uuid}"}
             div {
                 class: "flex justify-between",
                 div {
                     class:"w-10",
+                    onclick: move |evt| {
+                        consume_context::<Universe>().topology.write().insert_negward(Dimension::new("cursor".to_string()), Cell::new(CellType::Vertex));
+                        consume_context::<Universe>().topology.write().accurse_negward();
+                    },
                     "-"
                 }
                 div { class:"w-50", "cursor" }
                 div {
                     class:"w-10",
-                    onclick: move |evt| consume_context::<Universe>().topology.write().insert_posward(dimension.clone(), Cell::new(CellType::Preload)),
+                    onclick: move |evt| consume_context::<Universe>().topology.write().insert_posward(Dimension::new("cursor".to_string()), Cell::new(CellType::Preload)),
                     "+"
                 }
             }
