@@ -1,6 +1,9 @@
 extern crate zz;
 extern crate memories;
 
+use std::cell::RefCell;
+use std::rc::Rc;
+
 use zz::topology::Topology;
 use zz::dimension::Dimension;
 use zz::cell::{Cell, CellType};
@@ -51,7 +54,8 @@ fn App() -> Element {
 #[component]
 fn CellUI(cell: Cell, dimension: Dimension) -> Element {
     let uuid = cell.uuid;
-    let ct = Box::new(cell).as_content();
+    let cellref = Rc::new(RefCell::new(cell));
+    let ct = Box::new((*cellref).borrow_mut().clone()).as_content();
     let content = match ct {
         CellType::Value(v) => v,
         CellType::Function(f) => f, 
@@ -78,7 +82,9 @@ fn CellUI(cell: Cell, dimension: Dimension) -> Element {
                 div { class:"w-50", "cursor" }
                 div {
                     class:"w-10",
-                    onclick: move |evt| consume_context::<Universe>().topology.write().insert_posward(Dimension::new("cursor".to_string()), Cell::new(CellType::Preload)),
+                    onclick: move |evt| {
+                        consume_context::<Universe>().topology.write().insert_posward(Dimension::new("cursor".to_string()), Cell::new(CellType::Preload))
+                    },
                     "+"
                 }
             }
