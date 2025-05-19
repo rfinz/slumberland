@@ -23,9 +23,20 @@ impl Topology {
             dimensions: vec![d_cursor]
         }
     }
+    
+    pub fn get_head(&self, rank: Dimension) -> Rc<RefCell<Cell>> {
+        match self.iter_rank(rank).rev().last() {
+            None => Rc::clone(&self.accursed),
+            Some(i) => Rc::new(RefCell::new(i))
+        }
+    }
+    
+    pub fn get_accursed(&self) -> Rc<RefCell<Cell>>{
+        Rc::clone(&self.accursed)
+    }
 
-    pub fn get_accursed(&self) {
-        Rc::clone(&self.accursed);
+    pub fn reset_to_head(&mut self, rank:Dimension) {
+        self.accursed = self.get_head(rank);   
     }
 
     pub fn iter_rank(&self, rank: Dimension) -> IterRank {
@@ -168,6 +179,8 @@ impl Topology {
     }
 
 }
+
+/// IterRank processes from the currently accursed cell, and ends when it returns None.
 
 impl Iterator for IterRank {
     type Item = Cell;

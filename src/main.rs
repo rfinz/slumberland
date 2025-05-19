@@ -71,7 +71,7 @@ fn CellUI(cell: Cell, dimension: Dimension) -> Element {
                     class:"w-10",
                     onclick: move |evt| {
                         consume_context::<Universe>().topology.write().insert_negward(Dimension::new("cursor".to_string()), Cell::new(CellType::Vertex));
-                        consume_context::<Universe>().topology.write().accurse_negward();
+                        consume_context::<Universe>().topology.write().reset_to_head(Dimension::new("cursor".to_string()))
                     },
                     "-"
                 }
