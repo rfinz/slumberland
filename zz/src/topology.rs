@@ -1,12 +1,15 @@
 use std::cell::RefCell;
 use std::rc::Rc;
+use std::collections::HashMap;
+
 use crate::cell::{Cell, CellType};
 use crate::dimension::Dimension;
 
 pub struct Topology {
     d_cursor: Dimension,
     accursed: Rc<RefCell<Cell>>,
-    dimensions: Vec<Dimension>
+    dimensions: Vec<Dimension>,
+    cells: HashMap<String, Rc<RefCell<Cell>>>
 }
 
 pub struct IterRank {
@@ -17,10 +20,12 @@ pub struct IterRank {
 
 impl Topology {
     pub fn new(d_cursor: Dimension, cell: Cell) -> Self {
+        let ac = Rc::new(RefCell::new(cell));
         Topology {
             d_cursor: d_cursor.clone(),
-            accursed: Rc::new(RefCell::new(cell)),
-            dimensions: vec![d_cursor]
+            accursed: Rc::clone(&ac),
+            dimensions: vec![d_cursor],
+            cells: HashMap::from([(ac.borrow().uuid.to_string(), Rc::clone(&ac))])
         }
     }
     
@@ -79,34 +84,40 @@ impl Topology {
         }
     }
 
-    pub fn insert_posward_at(&self, dimension: Dimension, at: Rc<RefCell<Cell>>, mut cell: Cell) {
-        cell.set_negward(dimension.clone(), Rc::clone(&at));
-        let cell = Rc::new(RefCell::new(cell));
-        let mut borrowed = (*at).borrow_mut();
-        match borrowed.get_posward(dimension.clone()){
+    pub fn insert_posward_at(&mut self, dimension: Dimension, at: Rc<RefCell<Cell>>, cell: Cell) {
+        let c = Rc::new(RefCell::new(cell));
+        let mut borrowed_at = (*at).borrow_mut();
+        let mut borrowed_c = (*c).borrow_mut();
+        self.cells.insert(borrowed_c.uuid.to_string(), Rc::clone(&c));
+        borrowed_c.set_negward(dimension.clone(), Rc::clone(&at));
+        
+        match borrowed_at.get_posward(dimension.clone()){
             None => {
-               borrowed.set_posward(dimension, Rc::clone(&cell));
+               borrowed_at.set_posward(dimension.clone(), Rc::clone(&c));
             },
             Some(i) => {
-                (*cell).borrow_mut().set_posward(dimension.clone(), Rc::clone(&i));
-                (*i).borrow_mut().set_negward(dimension.clone(), Rc::clone(&cell));
-                borrowed.set_posward(dimension.clone(), Rc::clone(&cell));
+                borrowed_c.set_posward(dimension.clone(), Rc::clone(&i));
+                (*i).borrow_mut().set_negward(dimension.clone(), Rc::clone(&c));
+                borrowed_at.set_posward(dimension.clone(), Rc::clone(&c));
             }
         }
     }
 
-    pub fn insert_negward_at(&self, dimension: Dimension, at: Rc<RefCell<Cell>>, mut cell: Cell) {
-        cell.set_posward(dimension.clone(), Rc::clone(&at));
-        let cell = Rc::new(RefCell::new(cell));
-        let mut borrowed = (*at).borrow_mut();
-        match borrowed.get_negward(dimension.clone()){
+    pub fn insert_negward_at(&mut self, dimension: Dimension, at: Rc<RefCell<Cell>>, cell: Cell) {
+        let c = Rc::new(RefCell::new(cell));
+        let mut borrowed_at = (*at).borrow_mut();
+        let mut borrowed_c = (*c).borrow_mut();
+        self.cells.insert(borrowed_c.uuid.to_string(), Rc::clone(&c));
+        borrowed_c.set_posward(dimension.clone(), Rc::clone(&at));
+        
+        match borrowed_at.get_negward(dimension.clone()){
             None => {
-                borrowed.set_negward(dimension, Rc::clone(&cell));
+                borrowed_at.set_negward(dimension.clone(), Rc::clone(&c));
             },
             Some(i) => {
-                (*cell).borrow_mut().set_negward(dimension.clone(), Rc::clone(&i));
-                (*i).borrow_mut().set_posward(dimension.clone(), Rc::clone(&cell));
-                borrowed.set_negward(dimension.clone(), Rc::clone(&cell));
+                borrowed_c.set_negward(dimension.clone(), Rc::clone(&i));
+                (*i).borrow_mut().set_posward(dimension.clone(), Rc::clone(&c));
+                borrowed_at.set_negward(dimension.clone(), Rc::clone(&c));
             }
         }
     }
