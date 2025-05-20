@@ -47,6 +47,7 @@ fn App() -> Element {
 fn CellUI(cell: Rc<RefCell<Cell>>, dimension: Dimension) -> Element {
     let borrowed = cell.borrow().clone();
     let uuid = borrowed.uuid;
+    tracing::debug!("Cell: {:?}", uuid.to_string());
     let ct = Box::new(borrowed).as_content();
     let negref = Rc::clone(&cell);
     let posref = Rc::clone(&cell);
@@ -78,7 +79,7 @@ fn CellUI(cell: Rc<RefCell<Cell>>, dimension: Dimension) -> Element {
                     class:"w-10 pointer",
                     onclick: move |evt| {
                         consume_context::<Universe>().topology.write().insert_posward_at(Dimension::new("cursor".to_string()), Rc::clone(&posref), Cell::new(CellType::Preload));
-                        consume_context::<Universe>().topology.write().reset_to_head(Dimension::new("cursor".to_string()));
+                        consume_context::<Universe>().topology.write().reset_to_tail(Dimension::new("cursor".to_string()));
                     },
                     "+"
                 }
