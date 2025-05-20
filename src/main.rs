@@ -44,11 +44,12 @@ fn App() -> Element {
 }
 
 #[component]
-fn CellUI(cell: Cell, dimension: Dimension) -> Element {
-    let uuid = cell.uuid;
-    let ct = Box::new(cell.clone()).as_content();
-    let negref = Rc::new(RefCell::new(cell));
-    let posref = Rc::clone(&negref);
+fn CellUI(cell: Rc<RefCell<Cell>>, dimension: Dimension) -> Element {
+    let borrowed = cell.borrow().clone();
+    let uuid = borrowed.uuid;
+    let ct = Box::new(borrowed).as_content();
+    let negref = Rc::clone(&cell);
+    let posref = Rc::clone(&cell);
     let content = match ct {
         CellType::Value(v) => v,
         CellType::Function(f) => f, 
