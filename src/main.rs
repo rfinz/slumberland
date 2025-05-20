@@ -46,8 +46,9 @@ fn App() -> Element {
 #[component]
 fn CellUI(cell: Cell, dimension: Dimension) -> Element {
     let uuid = cell.uuid;
-    let cellref = Rc::new(RefCell::new(cell));
-    let ct = Box::new((*cellref).borrow_mut().clone()).as_content();
+    let ct = Box::new(cell.clone()).as_content();
+    let negref = Rc::new(RefCell::new(cell));
+    let posref = Rc::clone(&negref);
     let content = match ct {
         CellType::Value(v) => v,
         CellType::Function(f) => f, 
@@ -64,18 +65,19 @@ fn CellUI(cell: Cell, dimension: Dimension) -> Element {
             div {
                 class: "flex justify-between",
                 div {
-                    class:"w-10",
+                    class:"w-10 pointer",
                     onclick: move |evt| {
-                        consume_context::<Universe>().topology.write().insert_negward(Dimension::new("cursor".to_string()), Cell::new(CellType::Vertex));
-                        consume_context::<Universe>().topology.write().reset_to_head(Dimension::new("cursor".to_string()))
+                        consume_context::<Universe>().topology.write().insert_negward_at(Dimension::new("cursor".to_string()), Rc::clone(&negref), Cell::new(CellType::Vertex));
+                        consume_context::<Universe>().topology.write().reset_to_head(Dimension::new("cursor".to_string()));
                     },
                     "-"
                 }
                 div { class:"w-50", "cursor" }
                 div {
-                    class:"w-10",
+                    class:"w-10 pointer",
                     onclick: move |evt| {
-                        consume_context::<Universe>().topology.write().insert_posward(Dimension::new("cursor".to_string()), Cell::new(CellType::Preload))
+                        consume_context::<Universe>().topology.write().insert_posward_at(Dimension::new("cursor".to_string()), Rc::clone(&posref), Cell::new(CellType::Preload));
+                        consume_context::<Universe>().topology.write().reset_to_head(Dimension::new("cursor".to_string()));
                     },
                     "+"
                 }

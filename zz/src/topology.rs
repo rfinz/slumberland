@@ -82,14 +82,15 @@ impl Topology {
     pub fn insert_posward_at(&self, dimension: Dimension, at: Rc<RefCell<Cell>>, mut cell: Cell) {
         cell.set_negward(dimension.clone(), Rc::clone(&at));
         let cell = Rc::new(RefCell::new(cell));
-        match (*at).borrow_mut().get_posward(dimension.clone()){
+        let mut borrowed = (*at).borrow_mut();
+        match borrowed.get_posward(dimension.clone()){
             None => {
-               (*at).borrow_mut().set_posward(dimension, Rc::clone(&cell));
+               borrowed.set_posward(dimension, Rc::clone(&cell));
             },
             Some(i) => {
                 (*cell).borrow_mut().set_posward(dimension.clone(), Rc::clone(&i));
                 (*i).borrow_mut().set_negward(dimension.clone(), Rc::clone(&cell));
-                (*at).borrow_mut().set_posward(dimension.clone(), Rc::clone(&cell));
+                borrowed.set_posward(dimension.clone(), Rc::clone(&cell));
             }
         }
     }
@@ -97,14 +98,15 @@ impl Topology {
     pub fn insert_negward_at(&self, dimension: Dimension, at: Rc<RefCell<Cell>>, mut cell: Cell) {
         cell.set_posward(dimension.clone(), Rc::clone(&at));
         let cell = Rc::new(RefCell::new(cell));
-        match (*at).borrow_mut().get_negward(dimension.clone()){
+        let mut borrowed = (*at).borrow_mut();
+        match borrowed.get_negward(dimension.clone()){
             None => {
-                (*at).borrow_mut().set_negward(dimension, Rc::clone(&cell));
+                borrowed.set_negward(dimension, Rc::clone(&cell));
             },
             Some(i) => {
                 (*cell).borrow_mut().set_negward(dimension.clone(), Rc::clone(&i));
                 (*i).borrow_mut().set_posward(dimension.clone(), Rc::clone(&cell));
-                (*at).borrow_mut().set_negward(dimension.clone(), Rc::clone(&cell));
+                borrowed.set_negward(dimension.clone(), Rc::clone(&cell));
             }
         }
     }
