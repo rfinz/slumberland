@@ -28,9 +28,17 @@ impl Topology {
             cells: HashMap::from([(ac.borrow().uuid.to_string(), Rc::clone(&ac))])
         }
     }
-    
+
+    // if data stays in the topology, return a pointer
     pub fn get_head(&self, rank: Dimension) -> Rc<RefCell<Cell>> {
         match self.iter_rank(rank).rev().last() {
+            None => Rc::clone(&self.accursed),
+            Some(i) => i
+        }
+    }
+
+    pub fn get_tail(&self, rank: Dimension) -> Rc<RefCell<Cell>> {
+        match self.iter_rank(rank).last() {
             None => Rc::clone(&self.accursed),
             Some(i) => i
         }
@@ -42,6 +50,10 @@ impl Topology {
 
     pub fn reset_to_head(&mut self, rank:Dimension) {
         self.accursed = self.get_head(rank);   
+    }
+
+    pub fn reset_to_tail(&mut self, rank:Dimension) {
+        self.accursed = self.get_tail(rank);   
     }
 
     pub fn iter_rank(&self, rank: Dimension) -> IterRank {
