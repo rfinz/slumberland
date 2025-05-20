@@ -27,7 +27,7 @@ impl Topology {
     pub fn get_head(&self, rank: Dimension) -> Rc<RefCell<Cell>> {
         match self.iter_rank(rank).rev().last() {
             None => Rc::clone(&self.accursed),
-            Some(i) => Rc::new(RefCell::new(i))
+            Some(i) => i
         }
     }
     
@@ -215,17 +215,17 @@ impl Topology {
 /// IterRank processes from the currently accursed cell, and ends when it returns None.
 
 impl Iterator for IterRank {
-    type Item = Cell;
+    type Item = Rc<RefCell<Cell>>;
 
-    fn next(&mut self) -> Option<Cell> {
+    fn next(&mut self) -> Option<Rc<RefCell<Cell>>> {
         if self.end {
             return None;
         }
 
-        let ac = (*self.accursed).borrow_mut().clone();
+        let ac = Rc::clone(&self.accursed);
         // let res = Some(Cell::as_content(Box::new(ac)));
         {
-            let cell = (*self.accursed).borrow_mut().clone();
+            let cell = (*self.accursed).borrow().clone();
 
             match cell.get_posward(self.rank.clone()) {
                 None => {
@@ -242,15 +242,15 @@ impl Iterator for IterRank {
 
 impl DoubleEndedIterator for IterRank {
 
-    fn next_back(&mut self) -> Option<Cell> {
+    fn next_back(&mut self) -> Option<Rc<RefCell<Cell>>> {
         if self.end {
             return None;
         }
 
-        let ac = (*self.accursed).borrow_mut().clone();
+        let ac = Rc::clone(&self.accursed);
         // let res = Some(Cell::as_content(Box::new(ac)));
         {
-            let cell = (*self.accursed).borrow_mut().clone();
+            let cell = (*self.accursed).borrow().clone();
 
             match cell.get_negward(self.rank.clone()) {
                 None => {

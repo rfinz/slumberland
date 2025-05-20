@@ -71,14 +71,14 @@ impl Cell {
     pub fn get_posward(&self, dimension: Dimension) -> Option<Rc<RefCell<Cell>>> {
         match self.posward.get(&dimension) {
             None => None,
-            Some(k) => Some(Rc::clone(k)),
+            Some(k) => Some(Rc::clone(&k)),
         }
     }
 
     pub fn get_negward(&self, dimension: Dimension) -> Option<Rc<RefCell<Cell>>> {
         match self.negward.get(&dimension) {
             None => None,
-            Some(k) => Some(Rc::clone(k)),
+            Some(k) => Some(Rc::clone(&k)),
         }
     }
 
