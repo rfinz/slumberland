@@ -27,16 +27,8 @@ struct Universe {
 fn App() -> Element {
     let curse = Dimension::new("cursor".to_string());
     let ac = Cell::new(CellType::Vertex);
-    //let n = Cell::new(CellType::Monad("Python".to_string()));
-    //let n2 = Cell::new(CellType::Function("map".to_string()));
     let mut top: Signal<Topology> = use_signal(|| Topology::new(curse.clone(), ac));
-    //top.write().insert_posward(curse.clone(), n);
-    //top.write().accurse_posward();
-    //top.write().insert_posward(curse.clone(), n2);
-    //top.write().accurse_negward();
     use_context_provider(|| Universe { topology:top });
-    //top.accurse_negward();
-    
     
     tracing::debug!("Rendering!");
     rsx! {
