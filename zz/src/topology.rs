@@ -247,18 +247,16 @@ impl Iterator for IterRank {
 
         let ac = Rc::clone(&self.accursed);
         // let res = Some(Cell::as_content(Box::new(ac)));
-        {
-            let cell = (*self.accursed).borrow().clone();
-
-            match cell.get_posward(self.rank.clone()) {
-                None => {
-                    self.end = true;
-                },
-                Some(i) => {
-                    self.accursed = Rc::clone(&i);
-                },
-            };
-        }
+        let n = match (*self.accursed).borrow().get_posward(self.rank.clone()) {
+            None => {
+                self.end = true;
+                Rc::clone(&self.accursed)
+            },
+            Some(i) => {
+                Rc::clone(&i)
+            },
+        };
+        self.accursed = n;
         Some(ac)
     }
 }
@@ -272,18 +270,16 @@ impl DoubleEndedIterator for IterRank {
 
         let ac = Rc::clone(&self.accursed);
         // let res = Some(Cell::as_content(Box::new(ac)));
-        {
-            let cell = (*self.accursed).borrow().clone();
-
-            match cell.get_negward(self.rank.clone()) {
-                None => {
-                    self.end = true;
-                },
-                Some(i) => {
-                    self.accursed = Rc::clone(&i);
-                },
-            };
-        }
+        let n = match (*self.accursed).borrow().get_negward(self.rank.clone()) {
+            None => {
+                self.end = true;
+                Rc::clone(&self.accursed)
+            },
+            Some(i) => {
+                Rc::clone(&i)
+            },
+        };
+        self.accursed = n;
         Some(ac)
     }
 }
