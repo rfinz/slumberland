@@ -3,6 +3,7 @@ extern crate memories;
 
 use std::cell::RefCell;
 use std::rc::Rc;
+use std::collections::HashMap;
 
 use zz::topology::Topology;
 use zz::dimension::Dimension;
@@ -20,37 +21,53 @@ fn main() {
 
 #[derive(Clone, Copy)]
 struct Universe {
-    topology: Signal<Topology>,
+    pub topology: Signal<Topology>
 }
 
 #[component]
 fn App() -> Element {
     let curse = Dimension::new("cursor".to_string());
     let ac = Cell::new(CellType::Vertex);
-    let mut top: Signal<Topology> = use_signal(|| Topology::new(curse.clone(), ac));
+    let mut top = use_signal(|| Topology::new(curse.clone(), ac));
     use_context_provider(|| Universe { topology:top });
-    
-    tracing::debug!("Rendering!");
+
+    tracing::debug!("***---Rendering!---***");
     rsx! {
         document::Stylesheet { href: CSS }
         div {
             class:"flex flex-column",
-            for c in top.read().iter_rank(curse.clone()){
-                CellUI{ cell:c, dimension:curse.clone()}
+            div {
+                class:"flex flex-column",
+                for (i,c) in use_context::<Universe>().topology.read().iter_rank(curse.clone()).enumerate(){
+                    div {
+                        class:"flex",
+                        CellUI{ cell:Rc::clone(&c) }
+                    }
+                }
+            }
+            div {
+                class:"flex",
+                div {
+                    class:"w-100 pointer tc pt2 mt2 bt",
+                    onclick: move |evt| {
+                        use_context::<Universe>().topology.write().insert_negward(
+                            curse.clone(),
+                            Cell::new(CellType::Preload)
+                        );
+                    },
+                    "*"
+                }
             }
         }
-    }
-           
+    }      
 }
 
 #[component]
-fn CellUI(cell: Rc<RefCell<Cell>>, dimension: Dimension) -> Element {
+fn CellUI(cell: Rc<RefCell<Cell>>) -> Element {
     let borrowed = cell.borrow().clone();
     let uuid = borrowed.uuid;
-    tracing::debug!("Cell: {:?}", uuid.to_string());
     let ct = Box::new(borrowed).as_content();
-    let negref = Rc::clone(&cell);
-    let posref = Rc::clone(&cell);
+    let mut top =  consume_context::<Universe>().topology;
     let content = match ct {
         CellType::Value(v) => v,
         CellType::Function(f) => f, 
@@ -59,18 +76,21 @@ fn CellUI(cell: Rc<RefCell<Cell>>, dimension: Dimension) -> Element {
         CellType::Vertex => "Vertex".to_string(), 
         CellType::Preload => "Preload".to_string() 
     };
-    
+    tracing::debug!("-> vvv Cell: {:?}-{:?}", uuid.to_string(), content);
     rsx! {
         div {
             class: "w-25 cell tc",
-            div { class:"w-100 bb pb2 mb2", "{content} {uuid}"}
+            div { class:"w-100 bb pb2 mb2", "{content}"}
+            div { class:"w-100 bb pb2 mb2", "{uuid}"}
             div {
                 class: "flex justify-between",
                 div {
                     class:"w-10 pointer",
                     onclick: move |evt| {
-                        consume_context::<Universe>().topology.write().insert_negward_at(Dimension::new("cursor".to_string()), Rc::clone(&negref), Cell::new(CellType::Vertex));
-                        consume_context::<Universe>().topology.write().reset_to_head(Dimension::new("cursor".to_string()));
+                        top.write().insert_negward(
+                            Dimension::new("cursor".to_string()),
+                            Cell::new(CellType::Preload)
+                        )
                     },
                     "-"
                 }
@@ -78,12 +98,27 @@ fn CellUI(cell: Rc<RefCell<Cell>>, dimension: Dimension) -> Element {
                 div {
                     class:"w-10 pointer",
                     onclick: move |evt| {
-                        consume_context::<Universe>().topology.write().insert_posward_at(Dimension::new("cursor".to_string()), Rc::clone(&posref), Cell::new(CellType::Preload));
-                        consume_context::<Universe>().topology.write().reset_to_tail(Dimension::new("cursor".to_string()));
+                        top.write().insert_posward(
+                            Dimension::new("cursor".to_string()),
+                            Cell::new(CellType::Preload)
+                        )
                     },
                     "+"
                 }
             }
         }
+        {
+            let pos = match (*cell).borrow().get_posward(Dimension::new("cursor".to_string())) {
+                None => "None".to_string(),
+                Some(k) => k.borrow().uuid.to_string()
+            };
+            let neg = match (*cell).borrow().get_negward(Dimension::new("cursor".to_string())) {
+                None => "None".to_string(),
+                Some(k) => k.borrow().uuid.to_string()
+            };
+            tracing::debug!("-> ^^^ neg: {:?} pos: {:?}", neg, pos);
+        }  
+        
     }
+    
 }
