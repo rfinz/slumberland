@@ -16,7 +16,8 @@ use zz::cell::{Cell, CellType};
 
 pub fn memorize(topology: &Topology, dimension: Dimension) {
     for i in topology.iter_rank(dimension) {
-        let cell_box = Box::new(i);
+        let cell = i.borrow().clone();
+        let cell_box = Box::new(cell);
         let cell_name = Box::clone(&cell_box).uuid.hyphenated().to_string();
         if let Err(_) = write_cell(cell_box) {
 
@@ -49,7 +50,7 @@ pub fn write_cell(cell_box: Box<Cell>) -> std::io::Result<()> {
     for d in merge(conns.0.keys(), conns.1.keys()).unique() {
         let next = conns.0.get(&d);
         let prev = conns.1.get(&d);
-        let &Dimension(ref d_value) = d;
+        let Dimension{name: d_value} = d;
 
         let mut res : String = "".to_owned();
         match prev {
